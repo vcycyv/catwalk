@@ -20,10 +20,10 @@ func (s *ConnectionAssembler) ToData(rep rep.Connection) *entity.Connection {
 			ID:        rep.ID,
 			CreatedAt: rep.CreatedAt,
 			UpdatedAt: rep.UpdatedAt,
+			Name:      rep.Name,
 		},
 
 		Type:     rep.Type,
-		Name:     rep.Name,
 		Host:     rep.Host,
 		User:     rep.User,
 		Password: rep.Password,
@@ -37,6 +37,7 @@ func (s *ConnectionAssembler) ToRepresentation(data entity.Connection) *rep.Conn
 			ID:        data.ID,
 			CreatedAt: data.CreatedAt,
 			UpdatedAt: data.UpdatedAt,
+			Name:      data.Name,
 
 			Links: []rep.ResourceLink{
 				{
@@ -63,7 +64,6 @@ func (s *ConnectionAssembler) ToRepresentation(data entity.Connection) *rep.Conn
 		},
 
 		Type:     data.Type,
-		Name:     data.Name,
 		Host:     data.Host,
 		User:     data.User,
 		Password: data.Password,

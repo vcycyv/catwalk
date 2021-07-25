@@ -9,11 +9,13 @@ import (
 
 type dataSourceHandler struct {
 	dataSourceService domain.DataSourceInterface
+	authService       domain.AuthInterface
 }
 
-func NewDataSourceHandler(dataSourceService domain.DataSourceInterface) *dataSourceHandler {
+func NewDataSourceHandler(dataSourceService domain.DataSourceInterface, authService domain.AuthInterface) *dataSourceHandler {
 	return &dataSourceHandler{
 		dataSourceService: dataSourceService,
+		authService:       authService,
 	}
 }
 
@@ -38,4 +40,30 @@ func (s *dataSourceHandler) GetTableData(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, data)
+}
+
+func (s *dataSourceHandler) ConvertTableToCSV(c *gin.Context) {
+	connectionID := c.Param("id")
+	tableName := c.Param("tableName")
+	drawerID := c.Query("drawerId")
+
+	token := s.authService.ExtractToken(c)
+	user, _ := s.authService.GetUserFromToken(token)
+
+	dataSource, err := s.dataSourceService.ConvertTableToCSV(connectionID, drawerID, tableName, user)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, dataSource)
+}
+
+func (s *dataSourceHandler) GetDataSourceContent(c *gin.Context) {
+	dataSourceID := c.Param("id")
+	err := s.dataSourceService.GetContent(dataSourceID, c.Writer)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
 }

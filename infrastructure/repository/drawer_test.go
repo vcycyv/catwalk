@@ -14,7 +14,7 @@ func TestCreate(t *testing.T) {
 	repo := NewDrawerRepo(db)
 	name := "test"
 	drawer := entity.Drawer{
-		Name: name,
+		Base: entity.Base{Name: name},
 		User: "tester",
 	}
 	newDrawer, err := repo.Add(drawer)

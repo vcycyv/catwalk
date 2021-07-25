@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"io"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	rep "github.com/vcycyv/blog/representation"
@@ -23,7 +25,10 @@ type AuthInterface interface {
 type TableServiceInterface interface {
 	GetTables(connection rep.Connection) ([]string, error)
 	GetTableData(connection rep.Connection, table string) ([][]string, error)
+	ConvertTableToCSV(connection rep.Connection, table string, writer io.Writer) error
 }
 
 type FileService interface {
+	Save(reader io.Reader, fileName string) (string, error)
+	GetContent(fileID string, writer io.Writer) error
 }

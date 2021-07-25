@@ -15,6 +15,7 @@ import (
 	"github.com/vcycyv/blog/middleware"
 	"github.com/vcycyv/blog/service"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/gridfs"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -57,9 +58,12 @@ func initRouter() *gin.Engine {
 	connectionService := service.NewConnectionService(connectionRepo)
 	connectionHandler := handler.NewConnectionHandler(connectionService)
 	authHandler := handler.NewAuthHandler(authService)
+	dataSourceRepo := repository.NewDataSourceRepo(db)
 	tableService := infra.NewTableService()
-	dataSourceService := service.NewDataSourceService(tableService, connectionService)
-	dataSourceHandler := handler.NewDataSourceHandler(dataSourceService)
+	var bucket = initiateMongoBucket()
+	fileService := infra.NewFileService(*bucket)
+	dataSourceService := service.NewDataSourceService(dataSourceRepo, tableService, connectionService, fileService)
+	dataSourceHandler := handler.NewDataSourceHandler(dataSourceService, authService)
 
 	r.POST("/auth", authHandler.GetAuth)
 
@@ -80,6 +84,9 @@ func initRouter() *gin.Engine {
 		api.DELETE("/connections/:id", connectionHandler.Delete)
 		api.GET("/connections/:id/tables", dataSourceHandler.GetTables)
 		api.GET("/connections/:id/tables/:tableName", dataSourceHandler.GetTableData)
+		api.POST("/connections/:id/tables/:tableName/csv", dataSourceHandler.ConvertTableToCSV)
+
+		api.GET("/dataSource/:id/content", dataSourceHandler.GetDataSourceContent)
 	}
 	return r
 }
@@ -110,7 +117,7 @@ func createDB() *gorm.DB {
 	return db
 }
 
-func initiateMongoClient() *mongo.Client {
+func initiateMongoBucket() *gridfs.Bucket {
 	uri := infra.MongodbSetting.Uri
 	opts := options.Client()
 	credential := options.Credential{
@@ -123,7 +130,14 @@ func initiateMongoClient() *mongo.Client {
 	var err error
 	var client *mongo.Client
 	if client, err = mongo.Connect(context.Background(), opts); err != nil {
-		fmt.Println(err.Error())
+		log.Fatal("failed to open mongodb")
 	}
-	return client
+
+	bucket, err := gridfs.NewBucket(
+		client.Database("myfiles"),
+	)
+	if err != nil {
+		log.Fatal("failed to get bucket")
+	}
+	return bucket
 }

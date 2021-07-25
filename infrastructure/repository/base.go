@@ -32,4 +32,5 @@ func InitDB(db *gorm.DB) {
 func migrate(db *gorm.DB) {
 	_ = db.AutoMigrate(&entity.Drawer{})
 	_ = db.AutoMigrate(&entity.Connection{})
+	_ = db.AutoMigrate(&entity.DataSource{})
 }

@@ -3,7 +3,6 @@ package entity
 type Drawer struct {
 	Base
 
-	Name string
 	User string
 }
 

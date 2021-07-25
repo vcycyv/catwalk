@@ -20,9 +20,9 @@ func (s *DrawerAssembler) ToData(rep rep.Drawer) *entity.Drawer {
 			ID:        rep.ID,
 			CreatedAt: rep.CreatedAt,
 			UpdatedAt: rep.UpdatedAt,
+			Name:      rep.Name,
 		},
 
-		Name: rep.Name,
 		User: rep.User,
 	}
 }
@@ -33,6 +33,7 @@ func (s *DrawerAssembler) ToRepresentation(data entity.Drawer) *rep.Drawer {
 			ID:        data.ID,
 			CreatedAt: data.CreatedAt,
 			UpdatedAt: data.UpdatedAt,
+			Name:      data.Name,
 
 			Links: []rep.ResourceLink{
 				{
@@ -58,7 +59,6 @@ func (s *DrawerAssembler) ToRepresentation(data entity.Drawer) *rep.Drawer {
 			},
 		},
 
-		Name: data.Name,
 		User: data.User,
 	}
 }

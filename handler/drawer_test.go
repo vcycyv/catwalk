@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/vcycyv/blog/entity"
-	"github.com/vcycyv/blog/representation"
+	rep "github.com/vcycyv/blog/representation"
 )
 
 func TestDrawer_Add(t *testing.T) {
@@ -42,7 +42,7 @@ func TestDrawer_Get(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	body, _ := ioutil.ReadAll(w.Body)
-	got := &representation.Drawer{}
+	got := &rep.Drawer{}
 	_ = json.Unmarshal(body, &got)
 	assert.True(t, len(got.ID) > 0)
 	assert.Equal(t, drawerName, got.Name)
@@ -87,7 +87,7 @@ func TestDrawer_Update(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	body, _ := ioutil.ReadAll(w.Body)
-	got := &representation.Drawer{}
+	got := &rep.Drawer{}
 	_ = json.Unmarshal(body, &got)
 	assert.Equal(t, renamed, got.Name)
 
@@ -113,21 +113,21 @@ func TestDrawer_Delete(t *testing.T) {
 	r.ServeHTTP(w, req)
 
 	body, _ := ioutil.ReadAll(w.Body)
-	got := &representation.Drawer{}
+	got := &rep.Drawer{}
 	_ = json.Unmarshal(body, &got)
 
 	_ = db.Migrator().DropTable(&entity.Drawer{})
 	_ = db.Migrator().CreateTable(&entity.Drawer{})
 }
 
-func addDrawer(name string) *representation.Drawer {
+func addDrawer(name string) *rep.Drawer {
 	w := httptest.NewRecorder()
 
 	uri := "/drawers"
 	r := gin.Default()
 
-	drawer := representation.Drawer{
-		Name: name,
+	drawer := rep.Drawer{
+		Base: rep.Base{Name: name},
 	}
 	reqBody, _ := json.Marshal(drawer)
 	req := httptest.NewRequest(
@@ -146,7 +146,7 @@ func addDrawer(name string) *representation.Drawer {
 	return &drawer
 }
 
-func getDrawers() []*representation.Drawer {
+func getDrawers() []*rep.Drawer {
 	w := httptest.NewRecorder()
 
 	uri := "/drawers"
@@ -160,7 +160,7 @@ func getDrawers() []*representation.Drawer {
 	r.ServeHTTP(w, req)
 
 	body, _ := ioutil.ReadAll(w.Body)
-	var drawers []*representation.Drawer
+	var drawers []*rep.Drawer
 	_ = json.Unmarshal(body, &drawers)
 	return drawers
 }

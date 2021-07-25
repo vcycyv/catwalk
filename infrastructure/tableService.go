@@ -2,11 +2,13 @@ package infrastructure
 
 import (
 	"fmt"
+	"io"
 	"strings"
 
 	"database/sql"
 
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/joho/sqltocsv"
 	"github.com/sirupsen/logrus"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -105,6 +107,36 @@ func (s *tableService) GetTableData(connection rep.Connection, table string) ([]
 	}
 
 	return ret, nil
+}
+
+func (s *tableService) ConvertTableToCSV(connection rep.Connection, table string, writer io.Writer) error {
+	logrus.Debugf("about to convert table %s to csv", table)
+	db, err := s.getDBConn(connection)
+	if err != nil {
+		logrus.Errorf("failed to open connetion %s", connection.Name)
+		return err
+	}
+	sqlDB, err := db.DB()
+	if err != nil {
+		logrus.Errorf("failed to get sqlDB connetion %s", connection.Name)
+		return err
+	}
+	defer sqlDB.Close()
+
+	rows, err := db.Raw("select * from " + table).Rows()
+	if err != nil {
+		logrus.Errorf("failed to get table %s content", table)
+		return err
+	}
+
+	err = sqltocsv.Write(writer, rows)
+	if err != nil {
+		logrus.Error("failed to write rows to writer")
+		return err
+	}
+	logrus.Debugf("convertion of table %s to csv succeeded", table)
+
+	return nil
 }
 
 func (s *tableService) getDBConn(connection rep.Connection) (*gorm.DB, error) {

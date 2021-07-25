@@ -11,7 +11,9 @@ import (
 func TestDrawer_Add(t *testing.T) {
 	name := "sqlite"
 	drawer := representation.Drawer{
-		Name: name,
+		Base: representation.Base{
+			Name: name,
+		},
 		User: "user_a",
 	}
 	newDrawer, _ := drawerSvc.Add(drawer)

@@ -4,7 +4,6 @@ type Connection struct {
 	Base
 
 	Type     string
-	Name     string
 	Host     string
 	User     string
 	Password string
