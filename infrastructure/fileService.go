@@ -19,7 +19,7 @@ func NewFileService(bucket gridfs.Bucket) domain.FileService {
 	}
 }
 
-func (f *fileService) Save(reader io.Reader, fileName string) (string, error) {
+func (f *fileService) Save(fileName string, reader io.Reader) (string, error) {
 	logrus.Debugf("about save %s to mongodb", fileName)
 	objectID, err := f.bucket.UploadFromStream(fileName, reader)
 	if err != nil {

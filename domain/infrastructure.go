@@ -29,6 +29,7 @@ type TableServiceInterface interface {
 }
 
 type FileService interface {
-	Save(reader io.Reader, fileName string) (string, error)
+	Save(fileName string, reader io.Reader) (string, error)
 	GetContent(fileID string, writer io.Writer) error
+	Delete(fileID string) error
 }

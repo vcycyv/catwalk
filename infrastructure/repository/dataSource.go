@@ -13,12 +13,14 @@ import (
 )
 
 type dataSourceRepo struct {
-	db *gorm.DB
+	db          *gorm.DB
+	fileService domain.FileService
 }
 
-func NewDataSourceRepo(db *gorm.DB) domain.DataSourceRepository {
+func NewDataSourceRepo(db *gorm.DB, fileService domain.FileService) domain.DataSourceRepository {
 	return &dataSourceRepo{
 		db,
+		fileService,
 	}
 }
 
@@ -71,6 +73,16 @@ func (m *dataSourceRepo) Delete(id string) error {
 	logrus.Debugf("about to delete a dataSource %s", id)
 	tx := m.db.Begin()
 	if err := tx.Where("id = ?", id).Delete(&entity.DataSource{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	data, err := m.Get(id)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+	err = m.fileService.Delete(data.FileID)
+	if err != nil {
 		tx.Rollback()
 		return err
 	}

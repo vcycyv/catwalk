@@ -51,17 +51,21 @@ func initRouter() *gin.Engine {
 	repository.InitDB(db)
 
 	authService := infra.NewAuthService()
+	var bucket = initiateMongoBucket()
+	fileService := infra.NewFileService(*bucket)
+
 	drawerRepo := repository.NewDrawerRepo(db)
 	drawerService := service.NewDrawerService(drawerRepo)
 	drawerHandler := handler.NewDrawerHandler(drawerService, authService)
+
 	connectionRepo := repository.NewConnectionRepo(db)
 	connectionService := service.NewConnectionService(connectionRepo)
 	connectionHandler := handler.NewConnectionHandler(connectionService)
+
 	authHandler := handler.NewAuthHandler(authService)
-	dataSourceRepo := repository.NewDataSourceRepo(db)
+
+	dataSourceRepo := repository.NewDataSourceRepo(db, fileService)
 	tableService := infra.NewTableService()
-	var bucket = initiateMongoBucket()
-	fileService := infra.NewFileService(*bucket)
 	dataSourceService := service.NewDataSourceService(dataSourceRepo, tableService, connectionService, fileService)
 	dataSourceHandler := handler.NewDataSourceHandler(dataSourceService, authService)
 
@@ -86,7 +90,12 @@ func initRouter() *gin.Engine {
 		api.GET("/connections/:id/tables/:tableName", dataSourceHandler.GetTableData)
 		api.POST("/connections/:id/tables/:tableName/csv", dataSourceHandler.ConvertTableToCSV)
 
-		api.GET("/dataSource/:id/content", dataSourceHandler.GetDataSourceContent)
+		api.POST("/dataSource", dataSourceHandler.Add)
+		api.GET("/dataSource/:id", dataSourceHandler.Get)
+		api.GET("/dataSource", dataSourceHandler.GetAll)
+		api.PUT("/dataSource/:id", dataSourceHandler.Update)
+		api.GET("/dataSource/:id/content", dataSourceHandler.GetContent)
+		api.DELETE("/dataSource/:id", dataSourceHandler.Delete)
 	}
 	return r
 }

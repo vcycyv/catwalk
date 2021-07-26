@@ -21,10 +21,10 @@ func NewDataSourceService(dataSourceRepo domain.DataSourceRepository,
 	connectionService domain.ConnectionInterface,
 	fileService domain.FileService) domain.DataSourceInterface {
 	return &dataSourceService{
-		dataSourceRepo:    dataSourceRepo,
-		tableService:      tableService,
-		connectionService: connectionService,
-		fileService:       fileService,
+		dataSourceRepo,
+		tableService,
+		connectionService,
+		fileService,
 	}
 }
 
@@ -47,14 +47,14 @@ func (s *dataSourceService) ConvertTableToCSV(connectionID string, drawerID stri
 	errChan := make(chan error, 1)
 	go func() {
 		defer writer.Close()
-		err := s.tableService.ConvertTableToCSV(*conn, table, writer)
+		err := s.tableService.ConvertTableToCSV(*conn, table+".csv", writer)
 		if err != nil {
 			errChan <- err
 		}
 		close(errChan)
 	}()
 
-	id, err := s.fileService.Save(reader, table)
+	id, err := s.fileService.Save(table, reader)
 	if err != nil {
 		return nil, err
 	}
@@ -84,4 +84,62 @@ func (s *dataSourceService) GetContent(id string, writer io.Writer) error {
 		return err
 	}
 	return s.fileService.GetContent(dataSourceData.FileID, writer)
+}
+
+func (s *dataSourceService) Add(drawerID string, tableName string, user string, reader io.ReadCloser) (*rep.DataSource, error) {
+	fileId, err := s.fileService.Save(tableName, reader)
+	if err != nil {
+		return nil, err
+	}
+
+	data := &entity.DataSource{
+		Base:     entity.Base{Name: tableName},
+		DrawerID: drawerID,
+		User:     user,
+		FileID:   fileId,
+	}
+
+	data, err = s.dataSourceRepo.Add(*data)
+	if err != nil {
+		return nil, err
+	}
+	return assembler.DataSourceAss.ToRepresentation(*data), nil
+}
+
+func (s *dataSourceService) Get(id string) (*rep.DataSource, error) {
+	data, err := s.dataSourceRepo.Get(id)
+	if err != nil {
+		return nil, err
+	}
+	return assembler.DataSourceAss.ToRepresentation(*data), nil
+}
+
+func (s *dataSourceService) GetAll() ([]*rep.DataSource, error) {
+	dataSources, err := s.dataSourceRepo.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	rtnVal := []*rep.DataSource{}
+	for _, dataSource := range dataSources {
+		rtnVal = append(rtnVal, assembler.DataSourceAss.ToRepresentation(*dataSource))
+	}
+	return rtnVal, nil
+}
+
+func (s *dataSourceService) Update(dataSource rep.DataSource) (*rep.DataSource, error) {
+	data, err := s.dataSourceRepo.Update(*assembler.DataSourceAss.ToData(dataSource))
+	if err != nil {
+		return nil, err
+	}
+
+	return assembler.DataSourceAss.ToRepresentation(*data), nil
+}
+
+func (s *dataSourceService) Delete(id string) error {
+	err := s.dataSourceRepo.Delete(id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
