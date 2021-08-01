@@ -45,16 +45,18 @@ func (s *dataSourceService) ConvertTableToCSV(connectionID string, drawerID stri
 	defer reader.Close()
 
 	errChan := make(chan error, 1)
+	var columns []string
 	go func() {
 		defer writer.Close()
-		err := s.tableService.ConvertTableToCSV(*conn, table+".csv", writer)
+		var err error
+		columns, err = s.tableService.ConvertTableToCSV(*conn, table, writer)
 		if err != nil {
 			errChan <- err
 		}
 		close(errChan)
 	}()
 
-	id, err := s.fileService.Save(table, reader)
+	id, err := s.fileService.Save(table+".csv", reader)
 	if err != nil {
 		return nil, err
 	}
@@ -63,11 +65,16 @@ func (s *dataSourceService) ConvertTableToCSV(connectionID string, drawerID stri
 		return nil, err
 	}
 
+	var columnArrayData []entity.Column
+	for _, column := range columns {
+		columnArrayData = append(columnArrayData, entity.Column{Name: column})
+	}
 	data := entity.DataSource{
 		Base:     entity.Base{Name: table},
 		DrawerID: drawerID,
 		User:     user,
 		FileID:   id,
+		Columns:  columnArrayData,
 	}
 
 	newDataSource, err := s.dataSourceRepo.Add(data)

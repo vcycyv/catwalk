@@ -36,7 +36,7 @@ func (m *dataSourceRepo) Add(dataSource entity.DataSource) (*entity.DataSource, 
 func (m *dataSourceRepo) Get(id string) (*entity.DataSource, error) {
 	logrus.Debugf("about to get a dataSource %s", id)
 	var data entity.DataSource
-	err := m.db.Where("id = ?", id).First(&data).Error
+	err := m.db.Preload("Columns").Where("id = ?", id).First(&data).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, &representation.AppError{
@@ -72,15 +72,18 @@ func (m *dataSourceRepo) Update(dataSource entity.DataSource) (*entity.DataSourc
 func (m *dataSourceRepo) Delete(id string) error {
 	logrus.Debugf("about to delete a dataSource %s", id)
 	tx := m.db.Begin()
-	if err := tx.Where("id = ?", id).Delete(&entity.DataSource{}).Error; err != nil {
-		tx.Rollback()
-		return err
-	}
+
 	data, err := m.Get(id)
 	if err != nil {
 		tx.Rollback()
 		return err
 	}
+
+	if err := tx.Where("id = ?", id).Delete(&entity.DataSource{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	err = m.fileService.Delete(data.FileID)
 	if err != nil {
 		tx.Rollback()

@@ -109,34 +109,39 @@ func (s *tableService) GetTableData(connection rep.Connection, table string) ([]
 	return ret, nil
 }
 
-func (s *tableService) ConvertTableToCSV(connection rep.Connection, table string, writer io.Writer) error {
+func (s *tableService) ConvertTableToCSV(connection rep.Connection, table string, writer io.Writer) ([]string, error) {
 	logrus.Debugf("about to convert table %s to csv", table)
 	db, err := s.getDBConn(connection)
 	if err != nil {
 		logrus.Errorf("failed to open connetion %s", connection.Name)
-		return err
+		return nil, err
 	}
 	sqlDB, err := db.DB()
 	if err != nil {
 		logrus.Errorf("failed to get sqlDB connetion %s", connection.Name)
-		return err
+		return nil, err
 	}
 	defer sqlDB.Close()
 
 	rows, err := db.Raw("select * from " + table).Rows()
 	if err != nil {
 		logrus.Errorf("failed to get table %s content", table)
-		return err
+		return nil, err
+	}
+	columns, err := rows.Columns()
+	if err != nil {
+		logrus.Error("failed to get columns")
+		return nil, err
 	}
 
 	err = sqltocsv.Write(writer, rows)
 	if err != nil {
 		logrus.Error("failed to write rows to writer")
-		return err
+		return nil, err
 	}
 	logrus.Debugf("convertion of table %s to csv succeeded", table)
 
-	return nil
+	return columns, nil
 }
 
 func (s *tableService) getDBConn(connection rep.Connection) (*gorm.DB, error) {

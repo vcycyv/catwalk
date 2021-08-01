@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"reflect"
+
 	logger "github.com/sirupsen/logrus"
 
 	"gorm.io/gorm"
@@ -13,7 +15,14 @@ func InitDB(db *gorm.DB) {
 	var createCallback = func(db *gorm.DB) {
 		idField := db.Statement.Schema.LookUpField("id")
 		if idField != nil {
-			_ = idField.Set(db.Statement.ReflectValue, uuid.New().String())
+			switch db.Statement.ReflectValue.Kind() {
+			case reflect.Slice, reflect.Array:
+				for i := 0; i < db.Statement.ReflectValue.Len(); i++ {
+					_ = idField.Set(db.Statement.ReflectValue.Index(i), uuid.New().String())
+				}
+			case reflect.Struct:
+				_ = idField.Set(db.Statement.ReflectValue, uuid.New().String())
+			}
 		}
 	}
 
@@ -33,4 +42,5 @@ func migrate(db *gorm.DB) {
 	_ = db.AutoMigrate(&entity.Drawer{})
 	_ = db.AutoMigrate(&entity.Connection{})
 	_ = db.AutoMigrate(&entity.DataSource{})
+	_ = db.AutoMigrate(&entity.Column{})
 }

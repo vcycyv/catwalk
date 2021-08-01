@@ -25,7 +25,7 @@ type AuthInterface interface {
 type TableServiceInterface interface {
 	GetTables(connection rep.Connection) ([]string, error)
 	GetTableData(connection rep.Connection, table string) ([][]string, error)
-	ConvertTableToCSV(connection rep.Connection, table string, writer io.Writer) error
+	ConvertTableToCSV(connection rep.Connection, table string, writer io.Writer) ([]string, error)
 }
 
 type FileService interface {

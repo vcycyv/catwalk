@@ -31,6 +31,10 @@ func (s *DataSourceAssembler) ToData(rep rep.DataSource) *entity.DataSource {
 }
 
 func (s *DataSourceAssembler) ToRepresentation(data entity.DataSource) *rep.DataSource {
+	var columns []string
+	for _, columnData := range data.Columns {
+		columns = append(columns, columnData.Name)
+	}
 	return &rep.DataSource{
 		Base: rep.Base{
 			ID:        data.ID,
@@ -66,5 +70,6 @@ func (s *DataSourceAssembler) ToRepresentation(data entity.DataSource) *rep.Data
 		Description: data.Description,
 		User:        data.User,
 		FileID:      data.FileID,
+		Columns:     columns,
 	}
 }

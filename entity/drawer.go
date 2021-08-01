@@ -6,7 +6,6 @@ type Drawer struct {
 	User string
 }
 
-// func (d *Drawer) BeforeCreate(tx *gorm.DB) error {
-// 	d.ID = uuid.New().String()
-// 	return nil
-// }
+func (Drawer) TableName() string {
+	return "Drawer"
+}

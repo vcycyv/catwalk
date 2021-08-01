@@ -1,6 +1,8 @@
 package entity
 
-import "time"
+import (
+	"time"
+)
 
 type Base struct {
 	ID        string `gorm:"column:id;type:uuid;primary_key;"`

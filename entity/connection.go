@@ -9,3 +9,7 @@ type Connection struct {
 	Password string
 	DbName   string
 }
+
+func (Connection) TableName() string {
+	return "Connection"
+}
