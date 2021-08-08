@@ -4,7 +4,7 @@ import (
 	"io"
 
 	"github.com/sirupsen/logrus"
-	"github.com/vcycyv/blog/domain"
+	"github.com/vcycyv/catwalk/domain"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
 )

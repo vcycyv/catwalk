@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/vcycyv/blog/assembler"
-	"github.com/vcycyv/blog/domain"
-	rep "github.com/vcycyv/blog/representation"
+	"github.com/vcycyv/catwalk/assembler"
+	"github.com/vcycyv/catwalk/domain"
+	rep "github.com/vcycyv/catwalk/representation"
 )
 
 type connectionService struct {

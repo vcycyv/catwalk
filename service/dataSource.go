@@ -3,10 +3,10 @@ package service
 import (
 	"io"
 
-	"github.com/vcycyv/blog/assembler"
-	"github.com/vcycyv/blog/domain"
-	"github.com/vcycyv/blog/entity"
-	rep "github.com/vcycyv/blog/representation"
+	"github.com/vcycyv/catwalk/assembler"
+	"github.com/vcycyv/catwalk/domain"
+	"github.com/vcycyv/catwalk/entity"
+	rep "github.com/vcycyv/catwalk/representation"
 )
 
 type dataSourceService struct {

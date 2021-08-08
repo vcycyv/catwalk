@@ -5,7 +5,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
-	rep "github.com/vcycyv/blog/representation"
+	rep "github.com/vcycyv/catwalk/representation"
 )
 
 type Claims struct {

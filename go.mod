@@ -1,4 +1,4 @@
-module github.com/vcycyv/blog
+module github.com/vcycyv/catwalk
 
 go 1.15
 

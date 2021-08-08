@@ -15,8 +15,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/go-ldap/ldap/v3"
 
-	"github.com/vcycyv/blog/domain"
-	rep "github.com/vcycyv/blog/representation"
+	"github.com/vcycyv/catwalk/domain"
+	rep "github.com/vcycyv/catwalk/representation"
 )
 
 type authService struct {

@@ -11,8 +11,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/vcycyv/blog/entity"
-	rep "github.com/vcycyv/blog/representation"
+	"github.com/vcycyv/catwalk/entity"
+	rep "github.com/vcycyv/catwalk/representation"
 )
 
 func TestDrawer_Add(t *testing.T) {

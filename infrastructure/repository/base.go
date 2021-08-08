@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 
 	"github.com/google/uuid"
-	"github.com/vcycyv/blog/entity"
+	"github.com/vcycyv/catwalk/entity"
 )
 
 func InitDB(db *gorm.DB) {
@@ -43,4 +43,7 @@ func migrate(db *gorm.DB) {
 	_ = db.AutoMigrate(&entity.Connection{})
 	_ = db.AutoMigrate(&entity.DataSource{})
 	_ = db.AutoMigrate(&entity.Column{})
+	_ = db.AutoMigrate(&entity.Server{})
+	_ = db.AutoMigrate(&entity.ModelFile{})
+	_ = db.AutoMigrate(&entity.Model{})
 }

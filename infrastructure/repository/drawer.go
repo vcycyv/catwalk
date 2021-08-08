@@ -6,9 +6,9 @@ import (
 	"net/http"
 
 	"github.com/sirupsen/logrus"
-	"github.com/vcycyv/blog/domain"
-	"github.com/vcycyv/blog/entity"
-	"github.com/vcycyv/blog/representation"
+	"github.com/vcycyv/catwalk/domain"
+	"github.com/vcycyv/catwalk/entity"
+	"github.com/vcycyv/catwalk/representation"
 	"gorm.io/gorm"
 )
 

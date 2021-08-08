@@ -3,8 +3,8 @@ package domain
 import (
 	"io"
 
-	"github.com/vcycyv/blog/entity"
-	rep "github.com/vcycyv/blog/representation"
+	"github.com/vcycyv/catwalk/entity"
+	rep "github.com/vcycyv/catwalk/representation"
 )
 
 type DataSourceRepository interface {

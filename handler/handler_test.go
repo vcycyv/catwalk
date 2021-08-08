@@ -1,9 +1,9 @@
 package handler
 
 import (
-	"github.com/vcycyv/blog/infrastructure/mock"
-	"github.com/vcycyv/blog/infrastructure/repository"
-	"github.com/vcycyv/blog/service"
+	"github.com/vcycyv/catwalk/infrastructure/mock"
+	"github.com/vcycyv/catwalk/infrastructure/repository"
+	"github.com/vcycyv/catwalk/service"
 	"gorm.io/gorm"
 )
 

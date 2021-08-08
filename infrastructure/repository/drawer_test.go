@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/vcycyv/blog/entity"
-	"github.com/vcycyv/blog/infrastructure/mock"
+	"github.com/vcycyv/catwalk/entity"
+	"github.com/vcycyv/catwalk/infrastructure/mock"
 )
 
 func TestCreate(t *testing.T) {

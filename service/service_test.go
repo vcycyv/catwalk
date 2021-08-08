@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/vcycyv/blog/domain"
-	"github.com/vcycyv/blog/infrastructure/mock"
-	"github.com/vcycyv/blog/infrastructure/repository"
+	"github.com/vcycyv/catwalk/domain"
+	"github.com/vcycyv/catwalk/infrastructure/mock"
+	"github.com/vcycyv/catwalk/infrastructure/repository"
 	"gorm.io/gorm"
 )
 

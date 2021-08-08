@@ -9,11 +9,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/vcycyv/blog/handler"
-	infra "github.com/vcycyv/blog/infrastructure"
-	"github.com/vcycyv/blog/infrastructure/repository"
-	"github.com/vcycyv/blog/middleware"
-	"github.com/vcycyv/blog/service"
+	"github.com/vcycyv/catwalk/handler"
+	infra "github.com/vcycyv/catwalk/infrastructure"
+	"github.com/vcycyv/catwalk/infrastructure/repository"
+	"github.com/vcycyv/catwalk/middleware"
+	"github.com/vcycyv/catwalk/service"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/gridfs"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -25,11 +25,11 @@ import (
 func main() {
 	router := initRouter()
 	s := &http.Server{
-		Addr:           fmt.Sprintf(":%d", infra.AppSetting.HTTPPort),
-		Handler:        router,
-		ReadTimeout:    time.Duration(60) * time.Second,
-		WriteTimeout:   time.Duration(60) * time.Second,
-		MaxHeaderBytes: 1 << 20,
+		Addr:         fmt.Sprintf(":%d", infra.AppSetting.HTTPPort),
+		Handler:      router,
+		ReadTimeout:  time.Duration(60) * time.Second,
+		WriteTimeout: time.Duration(60) * time.Second,
+		//MaxHeaderBytes: 32 << 22,
 	}
 
 	err := s.ListenAndServe()
@@ -69,6 +69,17 @@ func initRouter() *gin.Engine {
 	dataSourceService := service.NewDataSourceService(dataSourceRepo, tableService, connectionService, fileService)
 	dataSourceHandler := handler.NewDataSourceHandler(dataSourceService, authService)
 
+	serverRepo := repository.NewServerRepo(db)
+	serverService := service.NewServerService(serverRepo)
+	serverHandler := handler.NewServerHandler(serverService)
+
+	modelFileRepo := repository.NewModelFileRepo(db, fileService)
+	modelFileService := service.NewModelFileService(modelFileRepo)
+
+	modelRepo := repository.NewModelRepo(db)
+	modelService := service.NewModelService(modelRepo)
+	modelHandler := handler.NewModelHandler(modelService, modelFileService, authService)
+
 	r.POST("/auth", authHandler.GetAuth)
 
 	api := r.Group("/")
@@ -96,6 +107,18 @@ func initRouter() *gin.Engine {
 		api.PUT("/dataSource/:id", dataSourceHandler.Update)
 		api.GET("/dataSource/:id/content", dataSourceHandler.GetContent)
 		api.DELETE("/dataSource/:id", dataSourceHandler.Delete)
+
+		api.GET("/servers/:id", serverHandler.Get)
+		api.GET("/servers", serverHandler.GetAll)
+		api.POST("/servers", serverHandler.Add)
+		api.DELETE("/servers/:id", serverHandler.Delete)
+
+		api.GET("/models/:id", modelHandler.Get)
+		api.GET("/models", modelHandler.GetAll)
+		api.POST("/models", modelHandler.ImportMultiForm)
+		api.POST("/models/:id/files", modelHandler.AddFile)
+		api.PUT("/models/:id", modelHandler.Update)
+		api.DELETE("/models/:id", modelHandler.Delete)
 	}
 	return r
 }
