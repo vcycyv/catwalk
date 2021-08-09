@@ -52,7 +52,7 @@ func (s *serverHandler) Get(c *gin.Context) {
 }
 
 func (s *serverHandler) GetAll(c *gin.Context) {
-	servers, err := s.serverService.GetAll()
+	servers, err := s.serverService.GetAll(make(map[string]interface{}))
 	if err != nil {
 		_ = c.Error(err)
 		return

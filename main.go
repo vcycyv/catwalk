@@ -69,9 +69,12 @@ func initRouter() *gin.Engine {
 	dataSourceService := service.NewDataSourceService(dataSourceRepo, tableService, connectionService, fileService)
 	dataSourceHandler := handler.NewDataSourceHandler(dataSourceService, authService)
 
+	computeService := infra.NewComputeService()
 	serverRepo := repository.NewServerRepo(db)
-	serverService := service.NewServerService(serverRepo)
+	serverService := service.NewServerService(serverRepo, computeService)
 	serverHandler := handler.NewServerHandler(serverService)
+
+	go serverService.RefreshHealth()
 
 	modelFileRepo := repository.NewModelFileRepo(db, fileService)
 	modelFileService := service.NewModelFileService(modelFileRepo)

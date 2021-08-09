@@ -33,3 +33,7 @@ type FileService interface {
 	GetContent(fileID string, writer io.Writer) error
 	Delete(fileID string) error
 }
+
+type ComputeService interface {
+	IsAlive(server rep.Server) bool
+}
