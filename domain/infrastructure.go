@@ -36,4 +36,5 @@ type FileService interface {
 
 type ComputeService interface {
 	IsAlive(server rep.Server) bool
+	BuildModel(server rep.Server, buildModelRequest BuildModelRequest, token string) (*rep.Model, error)
 }

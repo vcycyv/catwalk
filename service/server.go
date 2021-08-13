@@ -72,6 +72,29 @@ func (s *serverService) Delete(id string) error {
 	return nil
 }
 
+func (s *serverService) GetAvailableServer() (*rep.Server, error) {
+	count := 0
+	for i := 1; i < 13; i++ {
+		maps := make(map[string]interface{})
+		maps["status"] = "available"
+		maps["health"] = true
+		servers, _ := s.serverRepo.GetAll(maps)
+		for _, server := range servers {
+			rtnVal := assembler.ServerAss.ToRepresentation(*server)
+			if s.computeService.IsAlive(*rtnVal) {
+				return rtnVal, nil
+			}
+		}
+
+		time.Sleep(time.Second * 5)
+		count += i
+	}
+	return nil, &rep.AppError{
+		Code:    500,
+		Message: "No compute server available.",
+	}
+}
+
 func (s *serverService) RefreshHealth() {
 	ticker := time.NewTicker(time.Second * 10)
 	for range ticker.C {

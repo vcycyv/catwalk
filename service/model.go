@@ -7,12 +7,18 @@ import (
 )
 
 type modelService struct {
-	modelRepo domain.ModelRepository
+	modelRepo      domain.ModelRepository
+	serverService  domain.ServerInterface
+	computeService domain.ComputeService
 }
 
-func NewModelService(modelRepo domain.ModelRepository) domain.ModelInterface {
+func NewModelService(modelRepo domain.ModelRepository,
+	serverService domain.ServerInterface,
+	computeService domain.ComputeService) domain.ModelInterface {
 	return &modelService{
 		modelRepo,
+		serverService,
+		computeService,
 	}
 }
 
@@ -60,4 +66,13 @@ func (s *modelService) Delete(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *modelService) BuildModel(request domain.BuildModelRequest, token string) (*rep.Model, error) {
+	server, err := s.serverService.GetAvailableServer()
+	if err != nil {
+		return nil, err
+	}
+
+	return s.computeService.BuildModel(*server, request, token)
 }

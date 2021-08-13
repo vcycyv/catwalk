@@ -80,7 +80,7 @@ func initRouter() *gin.Engine {
 	modelFileService := service.NewModelFileService(modelFileRepo)
 
 	modelRepo := repository.NewModelRepo(db)
-	modelService := service.NewModelService(modelRepo)
+	modelService := service.NewModelService(modelRepo, serverService, computeService)
 	modelHandler := handler.NewModelHandler(modelService, modelFileService, authService)
 
 	r.POST("/auth", authHandler.GetAuth)
@@ -118,7 +118,7 @@ func initRouter() *gin.Engine {
 
 		api.GET("/models/:id", modelHandler.Get)
 		api.GET("/models", modelHandler.GetAll)
-		api.POST("/models", modelHandler.ImportMultiForm)
+		api.POST("/models", modelHandler.AddModel)
 		api.POST("/models/:id/files", modelHandler.AddFile)
 		api.PUT("/models/:id", modelHandler.Update)
 		api.DELETE("/models/:id", modelHandler.Delete)

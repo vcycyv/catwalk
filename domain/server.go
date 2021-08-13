@@ -18,5 +18,15 @@ type ServerInterface interface {
 	Get(id string) (*rep.Server, error)
 	GetAll(maps interface{}) ([]*rep.Server, error)
 	Delete(id string) error
+	GetAvailableServer() (*rep.Server, error)
 	RefreshHealth()
+}
+
+type BuildModelRequest struct {
+	TrainTable  string   `json:"trainTable"`
+	Predictors  []string `json:"predictors"`
+	Target      string   `json:"target"`
+	ModelName   string   `json:"modelName"`
+	Description string   `json:"description"`
+	Function    string   `json:"function"`
 }
