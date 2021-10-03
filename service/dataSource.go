@@ -2,6 +2,7 @@ package service
 
 import (
 	"io"
+	"sort"
 
 	"github.com/vcycyv/catwalk/assembler"
 	"github.com/vcycyv/catwalk/domain"
@@ -12,17 +13,20 @@ import (
 type dataSourceService struct {
 	dataSourceRepo    domain.DataSourceRepository
 	tableService      domain.TableServiceInterface
+	drawerService     domain.DrawerInterface
 	connectionService domain.ConnectionInterface
 	fileService       domain.FileService
 }
 
 func NewDataSourceService(dataSourceRepo domain.DataSourceRepository,
 	tableService domain.TableServiceInterface,
+	drawerService domain.DrawerInterface,
 	connectionService domain.ConnectionInterface,
 	fileService domain.FileService) domain.DataSourceInterface {
 	return &dataSourceService{
 		dataSourceRepo,
 		tableService,
+		drawerService,
 		connectionService,
 		fileService,
 	}
@@ -131,6 +135,24 @@ func (s *dataSourceService) GetAll() ([]*rep.DataSource, error) {
 	for _, dataSource := range dataSources {
 		rtnVal = append(rtnVal, assembler.DataSourceAss.ToRepresentation(*dataSource))
 	}
+
+	drawers, err := s.drawerService.GetAll()
+	if err != nil {
+		return nil, err
+	}
+
+	for i := range rtnVal {
+		for _, drawer := range drawers {
+			if rtnVal[i].DrawerID == drawer.ID {
+				rtnVal[i].DrawerName = drawer.Name
+			}
+		}
+	}
+
+	sort.Slice(rtnVal, func(i, j int) bool {
+		return rtnVal[i].DrawerName > rtnVal[j].DrawerName
+	})
+
 	return rtnVal, nil
 }
 

@@ -79,6 +79,11 @@ func (m *dataSourceRepo) Delete(id string) error {
 		return err
 	}
 
+	if err := tx.Where("data_source_id = ?", id).Delete(&entity.Column{}).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+
 	if err := tx.Where("id = ?", id).Delete(&entity.DataSource{}).Error; err != nil {
 		tx.Rollback()
 		return err

@@ -66,7 +66,7 @@ func initRouter() *gin.Engine {
 
 	dataSourceRepo := repository.NewDataSourceRepo(db, fileService)
 	tableService := infra.NewTableService()
-	dataSourceService := service.NewDataSourceService(dataSourceRepo, tableService, connectionService, fileService)
+	dataSourceService := service.NewDataSourceService(dataSourceRepo, tableService, drawerService, connectionService, fileService)
 	dataSourceHandler := handler.NewDataSourceHandler(dataSourceService, authService)
 
 	computeService := infra.NewComputeService()
@@ -104,12 +104,12 @@ func initRouter() *gin.Engine {
 		api.GET("/connections/:id/tables/:tableName", dataSourceHandler.GetTableData)
 		api.POST("/connections/:id/tables/:tableName/csv", dataSourceHandler.ConvertTableToCSV)
 
-		api.POST("/dataSource", dataSourceHandler.Add)
-		api.GET("/dataSource/:id", dataSourceHandler.Get)
-		api.GET("/dataSource", dataSourceHandler.GetAll)
-		api.PUT("/dataSource/:id", dataSourceHandler.Update)
-		api.GET("/dataSource/:id/content", dataSourceHandler.GetContent)
-		api.DELETE("/dataSource/:id", dataSourceHandler.Delete)
+		api.POST("/dataSources", dataSourceHandler.Add)
+		api.GET("/dataSources/:id", dataSourceHandler.Get)
+		api.GET("/dataSources", dataSourceHandler.GetAll)
+		api.PUT("/dataSources/:id", dataSourceHandler.Update)
+		api.GET("/dataSources/:id/content", dataSourceHandler.GetContent)
+		api.DELETE("/dataSources/:id", dataSourceHandler.Delete)
 
 		api.GET("/servers/:id", serverHandler.Get)
 		api.GET("/servers", serverHandler.GetAll)

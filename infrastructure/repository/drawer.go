@@ -62,7 +62,7 @@ func (m *drawerRepo) GetAll() ([]*entity.Drawer, error) {
 
 func (m *drawerRepo) Update(drawer entity.Drawer) (*entity.Drawer, error) {
 	logrus.Debugf("about to update a drawer %s", drawer.Name)
-	err := m.db.Save(&drawer).Error
+	err := m.db.Select("name", "updated_at").Updates(&drawer).Error
 	logrus.Debugf("drawer %s updated", drawer.Name)
 	return &drawer, err
 }
