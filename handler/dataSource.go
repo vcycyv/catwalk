@@ -161,3 +161,13 @@ func (s *dataSourceHandler) Delete(c *gin.Context) {
 	logger.Debugf("The dataSource %s is deleted successfully.", id)
 	c.JSON(http.StatusNoContent, nil)
 }
+
+func (s *dataSourceHandler) GetColumns(c *gin.Context) {
+	id := c.Param("id")
+	rtnVal, err := s.dataSourceService.GetColumns(id)
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+	c.JSON(http.StatusOK, rtnVal)
+}

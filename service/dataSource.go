@@ -1,9 +1,14 @@
 package service
 
 import (
+	"encoding/csv"
+	"fmt"
 	"io"
+	"io/ioutil"
+	"os"
 	"sort"
 
+	logger "github.com/sirupsen/logrus"
 	"github.com/vcycyv/catwalk/assembler"
 	"github.com/vcycyv/catwalk/domain"
 	"github.com/vcycyv/catwalk/entity"
@@ -171,4 +176,28 @@ func (s *dataSourceService) Delete(id string) error {
 		return err
 	}
 	return nil
+}
+
+func (s *dataSourceService) GetColumns(id string) ([]string, error) {
+	data, err := s.dataSourceRepo.Get(id)
+	if err != nil {
+		logger.Error(fmt.Sprintf("failed to get data source %s during getColumns", id))
+		return nil, err
+	}
+	file, err := ioutil.TempFile("", "table_")
+	if err != nil {
+		return nil, err
+	}
+	file, _ = os.OpenFile(file.Name(), os.O_WRONLY, 0644)
+
+	err = s.fileService.GetContent(data.FileID, file)
+	if err != nil {
+		logger.Error(fmt.Sprintf("failed to get file content %s during getColumns", data.FileID))
+		return nil, err
+	}
+	file.Close()
+	file, _ = os.OpenFile(file.Name(), os.O_RDONLY, 0644)
+	defer os.Remove(file.Name())
+	csvReader := csv.NewReader(file)
+	return csvReader.Read()
 }

@@ -110,6 +110,7 @@ func initRouter() *gin.Engine {
 		api.PUT("/dataSources/:id", dataSourceHandler.Update)
 		api.GET("/dataSources/:id/content", dataSourceHandler.GetContent)
 		api.DELETE("/dataSources/:id", dataSourceHandler.Delete)
+		api.GET("/dataSources/:id/columns", dataSourceHandler.GetColumns)
 
 		api.GET("/servers/:id", serverHandler.Get)
 		api.GET("/servers", serverHandler.GetAll)

@@ -25,4 +25,5 @@ type DataSourceInterface interface {
 	GetAll() ([]*rep.DataSource, error)
 	Update(dataSource rep.DataSource) (*rep.DataSource, error)
 	Delete(id string) error
+	GetColumns(id string) ([]string, error)
 }
