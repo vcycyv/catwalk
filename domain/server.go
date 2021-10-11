@@ -26,7 +26,7 @@ type BuildModelRequest struct {
 	TrainTable  string   `json:"trainTable"`
 	Predictors  []string `json:"predictors"`
 	Target      string   `json:"target"`
-	ModelName   string   `json:"modelName"`
+	Name        string   `json:"name"`
 	Description string   `json:"description"`
 	Function    string   `json:"function"`
 }

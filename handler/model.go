@@ -166,7 +166,7 @@ func (s *modelHandler) buildModel(c *gin.Context) {
 	if err := c.ShouldBind(&modelRequest); err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
-	modelRequest.TrainTable = "http://" + util.GetOutboundIP() + ":" + strconv.Itoa(infrastructure.AppSetting.HTTPPort) + "/dataSource/" + modelRequest.TrainTable + "/content"
+	modelRequest.TrainTable = "http://" + util.GetOutboundIP() + ":" + strconv.Itoa(infrastructure.AppSetting.HTTPPort) + "/dataSources/" + modelRequest.TrainTable + "/content"
 	model, err := s.modelService.BuildModel(modelRequest, s.authService.ExtractToken(c))
 	if err != nil {
 		_ = c.Error(err)
