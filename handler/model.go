@@ -133,6 +133,7 @@ func (s *modelHandler) importMultiForm(c *gin.Context) {
 	model.Name = c.Request.PostFormValue("name")
 	model.Description = c.Request.PostFormValue("description")
 	model.Function = c.Request.PostFormValue("function")
+	model.Algorithm = c.Request.PostFormValue("algorithm")
 
 	savedModel, err := s.modelService.Add(model)
 	if err != nil {

@@ -29,6 +29,7 @@ func (s *ModelAssembler) ToData(rep rep.Model) *entity.Model {
 
 		Description: rep.Description,
 		Function:    rep.Function,
+		Algorithm:   rep.Algorithm,
 		Files:       modelFiles,
 	}
 }
@@ -71,6 +72,7 @@ func (s *ModelAssembler) ToRepresentation(data entity.Model) *rep.Model {
 
 		Description: data.Description,
 		Function:    data.Function,
+		Algorithm:   data.Algorithm,
 		Files:       modelFiles,
 	}
 }

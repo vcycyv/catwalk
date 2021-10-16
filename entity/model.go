@@ -5,6 +5,7 @@ type Model struct {
 
 	Description string
 	Function    string
+	Algorithm   string
 	Files       []ModelFile `gorm:"foreignkey:ModelID;AssociationForeignKey:id"`
 }
 

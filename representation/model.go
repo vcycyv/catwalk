@@ -5,5 +5,6 @@ type Model struct {
 
 	Description string      `json:"description"`
 	Function    string      `json:"function"`
+	Algorithm   string      `json:"algorithm"`
 	Files       []ModelFile `json:"files"`
 }
