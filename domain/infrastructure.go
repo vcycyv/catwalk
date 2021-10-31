@@ -5,6 +5,7 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"github.com/vcycyv/catwalk/entity"
 	rep "github.com/vcycyv/catwalk/representation"
 )
 
@@ -32,6 +33,17 @@ type FileService interface {
 	Save(fileName string, reader io.Reader) (string, error)
 	GetContent(fileID string, writer io.Writer) error
 	Delete(fileID string) error
+}
+
+type FolderService interface {
+	Create(f entity.Folder) (*entity.Folder, error)
+	GetAll() ([]entity.Folder, error)
+	GetByID(id string) (*entity.Folder, error)
+	GetByPath(path string) (*entity.Folder, error)
+	GetChildren(parent string) ([]entity.Folder, error)
+	GetDescendants(parentPath string) ([]entity.Folder, error)
+	Rename(id string, name string) (*entity.Folder, error)
+	Delete(path string) error
 }
 
 type ComputeService interface {

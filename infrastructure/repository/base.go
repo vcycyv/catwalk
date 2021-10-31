@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"reflect"
 
 	logger "github.com/sirupsen/logrus"
@@ -36,6 +37,8 @@ func InitDB(db *gorm.DB) {
 	sqlDB.SetMaxOpenConns(100)
 
 	migrate(db)
+
+	migrateForFolderService(sqlDB)
 }
 
 func migrate(db *gorm.DB) {
@@ -46,4 +49,31 @@ func migrate(db *gorm.DB) {
 	_ = db.AutoMigrate(&entity.Server{})
 	_ = db.AutoMigrate(&entity.ModelFile{})
 	_ = db.AutoMigrate(&entity.Model{})
+}
+
+func migrateForFolderService(sqlDB *sql.DB) {
+	_, err := sqlDB.Exec("CREATE EXTENSION IF NOT EXISTS pgcrypto")
+	if err != nil {
+		logger.Fatal("failed to create extension")
+	}
+
+	_, err = sqlDB.Exec("CREATE EXTENSION IF NOT EXISTS ltree")
+	if err != nil {
+		logger.Fatal("failed to create extension")
+	}
+
+	_, err = sqlDB.Exec("CREATE TABLE IF NOT EXISTS Folder (id UUID PRIMARY KEY DEFAULT gen_random_uuid(), path ltree)")
+	if err != nil {
+		logger.Fatal("failed to create folder table")
+	}
+
+	_, err = sqlDB.Exec("CREATE INDEX IF NOT EXISTS path_gist_idx ON folder USING gist(path)")
+	if err != nil {
+		logger.Warn("failed to create gist index")
+	}
+
+	_, err = sqlDB.Exec("CREATE INDEX IF NOT EXISTS path_idx ON folder USING btree(path)")
+	if err != nil {
+		logger.Warn("failed to create btree index")
+	}
 }

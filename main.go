@@ -83,6 +83,9 @@ func initRouter() *gin.Engine {
 	modelService := service.NewModelService(modelRepo, serverService, computeService)
 	modelHandler := handler.NewModelHandler(modelService, modelFileService, authService)
 
+	folderRepo := repository.NewFolderRepo()
+	folderHandler := handler.NewFolderHandler(folderRepo)
+
 	r.POST("/auth", authHandler.GetAuth)
 
 	api := r.Group("/")
@@ -123,6 +126,12 @@ func initRouter() *gin.Engine {
 		api.POST("/models/:id/files", modelHandler.AddFile)
 		api.PUT("/models/:id", modelHandler.Update)
 		api.DELETE("/models/:id", modelHandler.Delete)
+
+		api.GET("/folders/:id", folderHandler.Get)
+		api.POST("/folders", folderHandler.Add)
+		api.GET("/folders", folderHandler.GetAll)
+		api.PUT("/folders/:id", folderHandler.Update)
+		api.DELETE("/folders/:id", folderHandler.Delete)
 	}
 	return r
 }
