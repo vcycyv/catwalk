@@ -120,6 +120,22 @@ func (s *modelHandler) Delete(c *gin.Context) {
 	c.JSON(http.StatusNoContent, nil)
 }
 
+func (s *modelHandler) Score(c *gin.Context) {
+	scoreRequest := domain.ScoreRequest{}
+	if err := c.ShouldBind(&scoreRequest); err != nil {
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
+	scoreRequest.ModelID = c.Param("id")
+
+	scoreOutput, err := s.modelService.Score(scoreRequest, s.authService.ExtractToken(c))
+	if err != nil {
+		_ = c.Error(err)
+		return
+	}
+
+	c.JSON(http.StatusOK, scoreOutput)
+}
+
 func (s *modelHandler) importMultiForm(c *gin.Context) {
 	err := c.Request.ParseMultipartForm(32 << 20) // 32MB
 	if err != nil {
@@ -134,6 +150,7 @@ func (s *modelHandler) importMultiForm(c *gin.Context) {
 	model.Description = c.Request.PostFormValue("description")
 	model.Function = c.Request.PostFormValue("function")
 	model.Algorithm = c.Request.PostFormValue("algorithm")
+	model.FolderID = c.Request.PostFormValue("folderId")
 
 	savedModel, err := s.modelService.Add(model)
 	if err != nil {

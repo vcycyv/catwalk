@@ -20,4 +20,5 @@ type ModelInterface interface {
 	Update(model rep.Model) (*rep.Model, error)
 	Delete(id string) error
 	BuildModel(request BuildModelRequest, token string) (*rep.Model, error)
+	Score(request ScoreRequest, token string) (*rep.DataSource, error)
 }

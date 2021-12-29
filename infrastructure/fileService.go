@@ -31,10 +31,23 @@ func (f *fileService) Save(fileName string, reader io.Reader) (string, error) {
 	return objectID.Hex(), nil
 }
 
-func (f *fileService) GetContent(fileID string, writer io.Writer) error {
+func (f *fileService) DirectContentToWriter(fileID string, writer io.Writer) error {
 	id, _ := primitive.ObjectIDFromHex(fileID)
 	_, err := f.bucket.DownloadToStream(id, writer)
+	if err != nil {
+		logrus.Error("failed to get file content: " + fileID)
+	}
 	return err
+}
+
+func (f *fileService) GetContent(fileID string) (io.Reader, error) {
+	id, _ := primitive.ObjectIDFromHex(fileID)
+	rtnVal, err := f.bucket.OpenDownloadStream(id)
+	if err != nil {
+		logrus.Error("failed to open download stream: " + fileID)
+		return nil, err
+	}
+	return rtnVal, nil
 }
 
 func (f *fileService) Delete(fileID string) error {

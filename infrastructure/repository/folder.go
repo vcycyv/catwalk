@@ -123,8 +123,12 @@ func (r *folderRepo) GetDescendants(parentPath string) ([]entity.Folder, error) 
 }
 
 //Delete delete by path
-func (r *folderRepo) Delete(path string) error {
-	query := "delete from folder where '" + path + "' @> path"
+func (r *folderRepo) Delete(id string) error {
+	folder, err := r.GetByID(id)
+	if err != nil {
+		return err
+	}
+	query := "delete from folder where '" + folder.Path + "' @> path"
 
 	return executeStatement(r.conn, query)
 }

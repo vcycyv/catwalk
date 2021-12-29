@@ -99,7 +99,7 @@ func (s *dataSourceService) GetContent(id string, writer io.Writer) error {
 	if err != nil {
 		return err
 	}
-	return s.fileService.GetContent(dataSourceData.FileID, writer)
+	return s.fileService.DirectContentToWriter(dataSourceData.FileID, writer)
 }
 
 func (s *dataSourceService) Add(drawerID string, tableName string, user string, reader io.ReadCloser) (*rep.DataSource, error) {
@@ -190,7 +190,7 @@ func (s *dataSourceService) GetColumns(id string) ([]string, error) {
 	}
 	file, _ = os.OpenFile(file.Name(), os.O_WRONLY, 0644)
 
-	err = s.fileService.GetContent(data.FileID, file)
+	err = s.fileService.DirectContentToWriter(data.FileID, file) //TODO try s.fileService.GetContent()
 	if err != nil {
 		logger.Error(fmt.Sprintf("failed to get file content %s during getColumns", data.FileID))
 		return nil, err

@@ -80,7 +80,7 @@ func initRouter() *gin.Engine {
 	modelFileService := service.NewModelFileService(modelFileRepo)
 
 	modelRepo := repository.NewModelRepo(db)
-	modelService := service.NewModelService(modelRepo, serverService, computeService)
+	modelService := service.NewModelService(modelRepo, serverService, computeService, fileService, dataSourceService)
 	modelHandler := handler.NewModelHandler(modelService, modelFileService, authService)
 
 	folderRepo := repository.NewFolderRepo()
@@ -126,6 +126,7 @@ func initRouter() *gin.Engine {
 		api.POST("/models/:id/files", modelHandler.AddFile)
 		api.PUT("/models/:id", modelHandler.Update)
 		api.DELETE("/models/:id", modelHandler.Delete)
+		api.POST("/models/:id/score", modelHandler.Score)
 
 		api.GET("/folders/:id", folderHandler.Get)
 		api.POST("/folders", folderHandler.Add)

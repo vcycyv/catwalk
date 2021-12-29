@@ -46,22 +46,22 @@ func (s *DataSourceAssembler) ToRepresentation(data entity.DataSource) *rep.Data
 				{
 					Rel:    "self",
 					Method: http.MethodGet,
-					Href:   fmt.Sprintf("/dataSource/%s", data.ID),
+					Href:   fmt.Sprintf("/dataSources/%s", data.ID),
 				},
 				{
 					Rel:    "add-dataSource",
 					Method: http.MethodPost,
-					Href:   "/dataSource",
+					Href:   "/dataSources",
 				},
 				{
 					Rel:    "edit-dataSource",
 					Method: http.MethodPut,
-					Href:   fmt.Sprintf("/dataSource/%s", data.ID),
+					Href:   fmt.Sprintf("/dataSources/%s", data.ID),
 				},
 				{
 					Rel:    "delete-dataSource",
 					Method: http.MethodDelete,
-					Href:   fmt.Sprintf("/dataSource/%s", data.ID),
+					Href:   fmt.Sprintf("/dataSources/%s", data.ID),
 				},
 			},
 		},

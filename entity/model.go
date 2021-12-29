@@ -3,6 +3,7 @@ package entity
 type Model struct {
 	Base
 
+	FolderID    string
 	Description string
 	Function    string
 	Algorithm   string

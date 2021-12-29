@@ -85,7 +85,7 @@ func (s *folderHandler) Update(c *gin.Context) {
 		return
 	}
 
-	name := c.Param("name")
+	name := c.Query("name")
 
 	folder, err := s.folderService.Rename(id, name)
 	if err != nil {

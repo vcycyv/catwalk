@@ -62,7 +62,7 @@ func (m *modelFileRepo) GetContent(id string, writer io.Writer) error {
 	if err != nil {
 		return err
 	}
-	err = m.fileService.GetContent(modelFile.FileID, writer)
+	err = m.fileService.DirectContentToWriter(modelFile.FileID, writer)
 	if err != nil {
 		return err
 	}

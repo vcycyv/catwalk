@@ -27,6 +27,7 @@ func (s *ModelAssembler) ToData(rep rep.Model) *entity.Model {
 			Name:      rep.Name,
 		},
 
+		FolderID:    rep.FolderID,
 		Description: rep.Description,
 		Function:    rep.Function,
 		Algorithm:   rep.Algorithm,
@@ -45,7 +46,6 @@ func (s *ModelAssembler) ToRepresentation(data entity.Model) *rep.Model {
 			CreatedAt: data.CreatedAt,
 			UpdatedAt: data.UpdatedAt,
 			Name:      data.Name,
-
 			Links: []rep.ResourceLink{
 				{
 					Rel:    "self",

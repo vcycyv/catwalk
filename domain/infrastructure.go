@@ -31,8 +31,9 @@ type TableServiceInterface interface {
 
 type FileService interface {
 	Save(fileName string, reader io.Reader) (string, error)
-	GetContent(fileID string, writer io.Writer) error
+	DirectContentToWriter(fileID string, writer io.Writer) error //TODO check if it makes sense for all consumers
 	Delete(fileID string) error
+	GetContent(fileID string) (io.Reader, error)
 }
 
 type FolderService interface {
@@ -49,4 +50,5 @@ type FolderService interface {
 type ComputeService interface {
 	IsAlive(server rep.Server) bool
 	BuildModel(server rep.Server, buildModelRequest BuildModelRequest, token string) (*rep.Model, error)
+	Score(server rep.Server, scoreRequest ScoreRequest, token string) (*rep.DataSource, error)
 }

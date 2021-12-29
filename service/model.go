@@ -1,24 +1,37 @@
 package service
 
 import (
+	"fmt"
+	"io/ioutil"
+	"strconv"
+	"strings"
+
 	"github.com/vcycyv/catwalk/assembler"
 	"github.com/vcycyv/catwalk/domain"
+	"github.com/vcycyv/catwalk/infrastructure"
+	"github.com/vcycyv/catwalk/infrastructure/util"
 	rep "github.com/vcycyv/catwalk/representation"
 )
 
 type modelService struct {
-	modelRepo      domain.ModelRepository
-	serverService  domain.ServerInterface
-	computeService domain.ComputeService
+	modelRepo         domain.ModelRepository
+	serverService     domain.ServerInterface
+	computeService    domain.ComputeService
+	fileService       domain.FileService
+	dataSourceService domain.DataSourceInterface
 }
 
 func NewModelService(modelRepo domain.ModelRepository,
 	serverService domain.ServerInterface,
-	computeService domain.ComputeService) domain.ModelInterface {
+	computeService domain.ComputeService,
+	fileService domain.FileService,
+	dataSourceService domain.DataSourceInterface) domain.ModelInterface {
 	return &modelService{
 		modelRepo,
 		serverService,
 		computeService,
+		fileService,
+		dataSourceService,
 	}
 }
 
@@ -75,4 +88,52 @@ func (s *modelService) BuildModel(request domain.BuildModelRequest, token string
 	}
 
 	return s.computeService.BuildModel(*server, request, token)
+}
+
+func (s *modelService) Score(request domain.ScoreRequest, token string) (*rep.DataSource, error) {
+	server, err := s.serverService.GetAvailableServer()
+	if err != nil {
+		return nil, err
+	}
+
+	model, err := s.Get(request.ModelID)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, file := range model.Files {
+		if s.isScoreFile(file) {
+			tmpFile, _ := ioutil.TempFile("", "model_")
+			err := s.fileService.DirectContentToWriter(file.FileID, tmpFile)
+			if err != nil {
+				return nil, err
+			}
+			request.ScoreFile = tmpFile
+			scoreInputTable, err := s.dataSourceService.Get(request.ScoreInputTableID)
+			if err != nil {
+				return nil, err
+			}
+			request.ScoreInputTableURL = "http://" + util.GetOutboundIP() + ":" + strconv.Itoa(infrastructure.AppSetting.HTTPPort) + "/dataSources/" + scoreInputTable.ID
+
+			rtnVal, err := s.computeService.Score(*server, request, token)
+			if err != nil {
+				return nil, err
+			}
+
+			return rtnVal, nil
+		}
+	}
+	return nil, fmt.Errorf("No scoring file")
+}
+
+func (s *modelService) isScoreFile(modelFile rep.ModelFile) bool {
+	if strings.EqualFold(modelFile.Role, "score") {
+		return true
+	}
+
+	if strings.HasSuffix(modelFile.Name, ".pickle") {
+		return true
+	}
+
+	return false
 }

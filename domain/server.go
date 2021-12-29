@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"os"
+
 	"github.com/vcycyv/catwalk/entity"
 	rep "github.com/vcycyv/catwalk/representation"
 )
@@ -27,7 +29,17 @@ type BuildModelRequest struct {
 	Predictors  []string `json:"predictors"`
 	Target      string   `json:"target"`
 	Name        string   `json:"name"`
+	FolderID    string   `json:"folderId"`
 	Description string   `json:"description"`
 	Function    string   `json:"function"`
 	Algorithm   string   `json:"algorithm"`
+}
+
+type ScoreRequest struct {
+	ModelID              string
+	ScoreFile            *os.File
+	ScoreInputTableID    string `json:"scoreInputTableId"`
+	ScoreInputTableURL   string
+	ScoreOutputTableName string `json:"scoreOutputTableName"`
+	DrawerID             string `json:"drawerId"`
 }
